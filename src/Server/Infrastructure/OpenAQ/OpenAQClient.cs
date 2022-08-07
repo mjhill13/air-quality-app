@@ -1,14 +1,14 @@
 using System.Web;
 using AirQualityApp.Server.Domain;
 using AirQualityApp.Server.Domain.Shared;
-using AirQualityApp.Server.Infrastructure.Model;
+using AirQualityApp.Server.Infrastructure.OpenAQ.Model;
 using AirQualityApp.Shared.Abstractions;
 using AirQualityApp.Shared.Models;
 using Flurl;
 using Flurl.Http;
 using Flurl.Util;
 
-namespace AirQualityApp.Server.Infrastructure;
+namespace AirQualityApp.Server.Infrastructure.OpenAQ;
 
 public class OpenAQClient : HttpClientBase, IOpenAQClient
 {

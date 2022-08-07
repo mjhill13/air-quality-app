@@ -1,4 +1,4 @@
-using AirQualityApp.Server.Infrastructure.Model;
+using AirQualityApp.Server.Infrastructure.OpenAQ.Model;
 using Flurl.Http;
 
 namespace AirQualityApp.Server.Infrastructure;

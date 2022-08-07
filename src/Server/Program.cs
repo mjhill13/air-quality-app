@@ -1,5 +1,6 @@
 using AirQualityApp.Server.Domain;
 using AirQualityApp.Server.Infrastructure;
+using AirQualityApp.Server.Infrastructure.OpenAQ;
 using AirQualityApp.Shared.Abstractions;
 
 var builder = WebApplication.CreateBuilder(args);
