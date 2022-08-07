@@ -12,6 +12,6 @@ public record PagingParams(string OrderBy = "", int Limit = 100, int Page = 1, i
             { "limit", Limit },
             { "page", Page },
             { "offset", Offset },
-            { "sort", Sort.ToString() },
+            { "sort", Sort.ToString().ToLowerInvariant() },
         };
 }

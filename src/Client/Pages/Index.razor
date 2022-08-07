@@ -1,9 +1,73 @@
 ﻿@page "/"
+@using AirQualityApp.Shared.Models
 
-<PageTitle>Index</PageTitle>
+@inject HttpClient Http
 
-<h1>Hello, world!</h1>
+<PageTitle>Search Cities</PageTitle>
 
-Welcome to your new app.
+<h1>Search</h1>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+@if (_countries is null)
+{
+    <p><em>Loading countries...</em></p>
+}
+else
+{
+    <select @onchange="DoSelectCountry">
+        @foreach (var country in _countries)
+        {
+            <option value=@country.Code>@($"{country.Name} ({country.Code})")</option>
+        }
+    </select>
+}
+
+@if (_selectedCountry is not null)
+{
+    @if (_cities is null)
+    {
+        <p><em>Loading cities...</em></p>
+    }
+    else
+    {
+        <select @onchange="DoSelectCity">
+            @foreach (var city in _cities)
+            {
+                <option value=@city.Name>@city.Name</option>
+            }
+        </select>
+    }
+}
+
+<br />
+<br />
+
+@if (_selectedCity is not null)
+{
+    <Measurements SelectedCity="@_selectedCity" />
+}
+
+@code {
+    private Country[]? _countries;
+    private string? _selectedCountry;
+    
+    private City[]? _cities;
+    private string? _selectedCity;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await Http.GetFromJsonAsync<Country[]>("Home/Countries");
+        _countries = response?.ToArray();
+    }
+
+    private async Task DoSelectCountry(ChangeEventArgs e)
+    {
+        _selectedCountry = e.Value?.ToString();
+        var response = await Http.GetFromJsonAsync<City[]>($"Home/Cities?countryCode={_selectedCountry}");
+        _cities = response?.ToArray();
+    }
+    
+    private void DoSelectCity(ChangeEventArgs e)
+    {
+        _selectedCity = e.Value?.ToString();
+    }
+}

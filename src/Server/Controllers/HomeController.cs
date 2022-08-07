@@ -24,14 +24,14 @@ public class HomeController  : ControllerBase
     }
     
     [HttpGet("Cities")]
-    public async Task<IActionResult> GetCities()
+    public async Task<IActionResult> GetCities([FromQuery, MinLength(1)] string countryCode)
     {
-        var cities = await new GetCitiesQuery(_openAqClient).RunAsync();
+        var cities = await new GetCitiesQuery(_openAqClient, countryCode).RunAsync();
         return new OkObjectResult(cities);
     }
     
     [HttpGet("Measurements")]
-    public async Task<IActionResult> GetMeasurements([FromQuery, MinLength(1)]string cityName)
+    public async Task<IActionResult> GetMeasurements([FromQuery, MinLength(1)] string cityName)
     {
         var measurements = await new GetMeasurementsQuery(_openAqClient, cityName).RunAsync();
         return new OkObjectResult(measurements);

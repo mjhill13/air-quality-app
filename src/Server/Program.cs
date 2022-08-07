@@ -1,4 +1,6 @@
-using Microsoft.AspNetCore.ResponseCompression;
+using AirQualityApp.Server.Domain;
+using AirQualityApp.Server.Infrastructure;
+using AirQualityApp.Shared.Abstractions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,6 +8,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+
+builder.Services.AddScoped<IOpenAQClient, OpenAQClient>();
+builder.Services.AddScoped<IDateProvider, DateProvider>();
 
 var app = builder.Build();
 

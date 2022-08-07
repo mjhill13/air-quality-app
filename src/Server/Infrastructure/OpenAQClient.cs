@@ -35,7 +35,7 @@ public class OpenAQClient : HttpClientBase, IOpenAQClient
     {
         var response = await Run(() => BaseUrl
             .AppendPathSegment("/v2/cities")
-            .SetQueryParams(new PagingParams().AsQueryParams)
+            .SetQueryParams(new PagingParams(OrderBy: "city").AsQueryParams)
             .SetQueryParam("country_id", countryCode)
             .GetAsync()
             .ReceiveJson<Response<CityResponse>>());

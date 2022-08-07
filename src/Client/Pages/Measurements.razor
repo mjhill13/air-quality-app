@@ -1,0 +1,48 @@
+@page "/Measurements"
+@using AirQualityApp.Shared.Models
+
+@inject HttpClient Http
+
+<h3>Measurements</h3>
+
+@if (_measurements is null)
+{
+  <p><em>Loading...</em></p>
+}
+else
+{
+  <table class="table">
+    <thead>
+    <tr>
+      <th>Location ID</th>
+      <th>Location</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var measurement in _measurements)
+    {
+      <tr>
+        <td>@measurement.Id</td>
+        <td>@measurement.Location</td>
+      </tr>
+    }
+    </tbody>
+  </table>
+}
+
+
+@code {
+  private Measurement[]? _measurements;
+  
+  [Parameter]
+  public string? SelectedCity { get; set; }
+
+  protected override async Task OnParametersSetAsync()
+  {
+    if (SelectedCity is not null)
+    {
+      var response = await Http.GetFromJsonAsync<Measurement[]>($"Home/Measurements?cityName={SelectedCity}");
+      _measurements = response?.ToArray();
+    }
+  }
+}
