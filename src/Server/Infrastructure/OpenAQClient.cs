@@ -1,7 +1,7 @@
 using System.Web;
 using AirQualityApp.Server.Domain;
+using AirQualityApp.Server.Domain.Shared;
 using AirQualityApp.Server.Infrastructure.Model;
-using AirQualityApp.Shared;
 using AirQualityApp.Shared.Abstractions;
 using AirQualityApp.Shared.Models;
 using Flurl;
@@ -43,17 +43,17 @@ public class OpenAQClient : HttpClientBase, IOpenAQClient
         return response.Results.Select(x => new City(x.City));
     }
 
-    public async Task<IEnumerable<Measurement>> FetchMeasurements(string city)
+    public async Task<IEnumerable<Measurement>> FetchMeasurements(string city, PagingParams paging)
     {
         var response = await Run(() => BaseUrl
             .AppendPathSegment("/v2/measurements")
-            .SetQueryParams(new PagingParams("datetime", 100, 1, 0, SortOrder.Desc))
+            .SetQueryParams(paging.AsQueryParams)
             .SetQueryParam("date_from", _dateProvider.Today.AddDays(-30).ToInvariantString())
             .SetQueryParam("city", HttpUtility.UrlEncode(city))
             .SetQueryParam("radius", 1000)
             .GetAsync()
-            .ReceiveJson<Response<Measurement>>());
+            .ReceiveJson<Response<MeasurementResponse>>());
 
-        return response.Results.Select(x => new Measurement(x.Id, x.Location));
+        return response.Results.Select(x => new Measurement(x.LocationId, x.Location, x.Value, x.Unit));
     }
 }

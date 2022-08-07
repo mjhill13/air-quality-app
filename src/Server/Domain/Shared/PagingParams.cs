@@ -1,6 +1,7 @@
+using AirQualityApp.Shared.Models;
 using Flurl;
 
-namespace AirQualityApp.Server.Infrastructure.Model;
+namespace AirQualityApp.Server.Domain.Shared;
 
 public record PagingParams(string OrderBy = "", int Limit = 100, int Page = 1, int Offset = 0,
     SortOrder Sort = SortOrder.Asc)

@@ -5,17 +5,31 @@
 
 <h3>Measurements</h3>
 
+<label>Order By</label>
+<select @onchange="DoSelectOrder">
+  <option value="datetime">Date</option>
+  <option value="location">Location</option>
+</select>
+
+<label>Sort</label>
+<select @onchange="DoSelectSort">
+  <option value="asc">Ascending</option>
+  <option value="desc">Descending</option>
+</select>
+
+
 @if (_measurements is null)
 {
-  <p><em>Loading...</em></p>
+  <p><em>No measurements found. Please change your filters.</em></p>
 }
 else
 {
   <table class="table">
     <thead>
     <tr>
-      <th>Location ID</th>
-      <th>Location</th>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Value</th>
     </tr>
     </thead>
     <tbody>
@@ -23,7 +37,8 @@ else
     {
       <tr>
         <td>@measurement.Id</td>
-        <td>@measurement.Location</td>
+        <td>@measurement.Name</td>
+        <td>@measurement.Value (@measurement.Unit)</td>
       </tr>
     }
     </tbody>
@@ -32,16 +47,32 @@ else
 
 
 @code {
+  private string? _selectedOrder = "datetime";
+  private string? _selectedSort = "asc";
   private Measurement[]? _measurements;
   
   [Parameter]
   public string? SelectedCity { get; set; }
 
-  protected override async Task OnParametersSetAsync()
+  protected override Task OnParametersSetAsync() => LoadMeasurements();
+
+  private Task DoSelectOrder(ChangeEventArgs e)
+  {
+    _selectedOrder = e.Value?.ToString();
+    return LoadMeasurements();
+  }
+  
+  private Task DoSelectSort(ChangeEventArgs e)
+  {
+    _selectedSort = e.Value?.ToString();
+    return LoadMeasurements();
+  }
+
+  private async Task LoadMeasurements()
   {
     if (SelectedCity is not null)
     {
-      var response = await Http.GetFromJsonAsync<Measurement[]>($"Home/Measurements?cityName={SelectedCity}");
+      var response = await Http.GetFromJsonAsync<Measurement[]>($"Home/Measurements?cityName={SelectedCity}&order={_selectedOrder}&sort={_selectedSort}");
       _measurements = response?.ToArray();
     }
     else

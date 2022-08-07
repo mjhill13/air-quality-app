@@ -1,6 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using AirQualityApp.Server.Application.Queries;
 using AirQualityApp.Server.Domain;
+using AirQualityApp.Server.Domain.Shared;
+using AirQualityApp.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AirQualityApp.Server.Controllers;
@@ -31,9 +33,10 @@ public class HomeController  : ControllerBase
     }
     
     [HttpGet("Measurements")]
-    public async Task<IActionResult> GetMeasurements([FromQuery, MinLength(1)] string cityName)
+    public async Task<IActionResult> GetMeasurements([FromQuery, MinLength(1)] string cityName, [FromQuery] string order = "datetime", [FromQuery] SortOrder sort = SortOrder.Asc)
     {
-        var measurements = await new GetMeasurementsQuery(_openAqClient, cityName).RunAsync();
+        var measurements = await new GetMeasurementsQuery(_openAqClient, cityName, 
+            new PagingParams(OrderBy: order, Sort: sort)).RunAsync();
         return new OkObjectResult(measurements);
     }
 }
