@@ -1,7 +1,7 @@
 using AirQualityApp.Server.Domain.Shared;
 using AirQualityApp.Shared.Models;
 
-namespace AirQualityApp.Server.Domain;
+namespace AirQualityApp.Server.Infrastructure.OpenAQ;
 
 public interface IOpenAQClient
 {

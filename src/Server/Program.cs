@@ -10,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
-builder.Services.AddScoped<IOpenAQClient, OpenAQClient>();
+builder.Services.AddScoped<IOpenAQClientFactory, OpenAQClientFactory>();
 builder.Services.AddScoped<IDateProvider, DateProvider>();
 
 var app = builder.Build();

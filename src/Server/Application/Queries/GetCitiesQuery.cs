@@ -1,19 +1,20 @@
 using AirQualityApp.Server.Domain;
+using AirQualityApp.Server.Infrastructure.OpenAQ;
 using AirQualityApp.Shared.Models;
 
 namespace AirQualityApp.Server.Application.Queries;
 
 public class GetCitiesQuery
 {
-    private readonly IOpenAQClient _openAqClient;
+    private readonly IOpenAQClient _client;
     private readonly string _countryCode;
 
-    public GetCitiesQuery(IOpenAQClient openAqClient, string countryCode)
+    public GetCitiesQuery(IOpenAQClientFactory clientFactory, string countryCode)
     {
-        _openAqClient = openAqClient;
+        _client = clientFactory.Create();
         _countryCode = countryCode;
     }
 
     public Task<IEnumerable<City>> RunAsync() => 
-        _openAqClient.FetchCities(_countryCode);
+        _client.FetchCities(_countryCode);
 }

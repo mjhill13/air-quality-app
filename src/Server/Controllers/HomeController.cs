@@ -2,7 +2,6 @@ using System.ComponentModel.DataAnnotations;
 using AirQualityApp.Server.Application.Queries;
 using AirQualityApp.Server.Domain;
 using AirQualityApp.Server.Domain.Shared;
-using AirQualityApp.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AirQualityApp.Server.Controllers;
@@ -11,31 +10,31 @@ namespace AirQualityApp.Server.Controllers;
 [Route("[controller]")]
 public class HomeController  : ControllerBase
 {
-    private readonly IOpenAQClient _openAqClient;
+    private readonly IOpenAQClientFactory _clientFactory;
 
-    public HomeController(IOpenAQClient openAqClient)
+    public HomeController(IOpenAQClientFactory clientFactory)
     {
-        _openAqClient = openAqClient;
+        _clientFactory = clientFactory;
     }
     
     [HttpGet("Countries")]
     public async Task<IActionResult> GetCountries()
     {
-        var countries = await new GetCountriesQuery(_openAqClient).RunAsync();
+        var countries = await new GetCountriesQuery(_clientFactory).RunAsync();
         return new OkObjectResult(countries);
     }
     
     [HttpGet("Cities")]
     public async Task<IActionResult> GetCities([FromQuery, MinLength(1)] string countryCode)
     {
-        var cities = await new GetCitiesQuery(_openAqClient, countryCode).RunAsync();
+        var cities = await new GetCitiesQuery(_clientFactory, countryCode).RunAsync();
         return new OkObjectResult(cities);
     }
     
     [HttpGet("Measurements")]
     public async Task<IActionResult> GetMeasurements([FromQuery, MinLength(1)] string cityName, [FromQuery] string order = "datetime", [FromQuery] SortOrder sort = SortOrder.Asc)
     {
-        var measurements = await new GetMeasurementsQuery(_openAqClient, cityName, 
+        var measurements = await new GetMeasurementsQuery(_clientFactory, cityName, 
             new PagingParams(OrderBy: order, Sort: sort)).RunAsync();
         return new OkObjectResult(measurements);
     }
