@@ -15,6 +15,7 @@ public class OpenAQClientFactory : IOpenAQClientFactory
     public OpenAQClient Create()
     {
         var dateProvider = _serviceProvider.GetRequiredService<IDateProvider>();
-        return new OpenAQClient(dateProvider);
+        var config = _serviceProvider.GetRequiredService<OpenAQConfig>();
+        return new OpenAQClient(dateProvider, config);
     }
 }

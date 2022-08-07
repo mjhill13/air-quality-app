@@ -1,5 +1,4 @@
 using System.Web;
-using AirQualityApp.Server.Domain;
 using AirQualityApp.Server.Domain.Shared;
 using AirQualityApp.Server.Infrastructure.OpenAQ.Model;
 using AirQualityApp.Shared.Abstractions;
@@ -13,11 +12,13 @@ namespace AirQualityApp.Server.Infrastructure.OpenAQ;
 public class OpenAQClient : HttpClientBase, IOpenAQClient
 {
     private readonly IDateProvider _dateProvider;
+    private readonly OpenAQConfig _config;
     private const string BaseUrl = "https://api.openaq.org";
 
-    public OpenAQClient(IDateProvider dateProvider)
+    public OpenAQClient(IDateProvider dateProvider, OpenAQConfig config)
     {
         _dateProvider = dateProvider;
+        _config = config;
     }
     
     public async Task<IEnumerable<Country>> FetchAllCountries()
@@ -45,12 +46,14 @@ public class OpenAQClient : HttpClientBase, IOpenAQClient
 
     public async Task<IEnumerable<Measurement>> FetchMeasurements(string city, PagingParams paging)
     {
+        Console.WriteLine(_config.MeasurementRadius);
+        Console.WriteLine(_config.MaxDays);
         var response = await Run(() => BaseUrl
             .AppendPathSegment("/v2/measurements")
             .SetQueryParams(paging.AsQueryParams)
-            .SetQueryParam("date_from", _dateProvider.Today.AddDays(-30).ToInvariantString())
+            .SetQueryParam("date_from", _dateProvider.Today.AddDays(_config.MaxDays * -1).ToInvariantString())
             .SetQueryParam("city", HttpUtility.UrlEncode(city))
-            .SetQueryParam("radius", 1000)
+            .SetQueryParam("radius", _config.MeasurementRadius)
             .GetAsync()
             .ReceiveJson<Response<MeasurementResponse>>());
 

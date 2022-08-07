@@ -1,17 +1,15 @@
-using AirQualityApp.Server.Domain;
+using AirQualityApp.Server.Extensions;
 using AirQualityApp.Server.Infrastructure;
-using AirQualityApp.Server.Infrastructure.OpenAQ;
 using AirQualityApp.Shared.Abstractions;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
-
-builder.Services.AddScoped<IOpenAQClientFactory, OpenAQClientFactory>();
 builder.Services.AddScoped<IDateProvider, DateProvider>();
+builder.Services.AddOpenAQ(builder.Configuration);
 
 var app = builder.Build();
 
