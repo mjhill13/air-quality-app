@@ -44,5 +44,9 @@ else
       var response = await Http.GetFromJsonAsync<Measurement[]>($"Home/Measurements?cityName={SelectedCity}");
       _measurements = response?.ToArray();
     }
+    else
+    {
+      _measurements = null;
+    }
   }
 }

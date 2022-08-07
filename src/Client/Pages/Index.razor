@@ -3,40 +3,39 @@
 
 @inject HttpClient Http
 
-<PageTitle>Search Cities</PageTitle>
+<PageTitle>Home</PageTitle>
 
-<h1>Search</h1>
+<h1>Air Quality Measurements</h1>
 
-@if (_countries is null)
+<p>This page allows you to search for air quality measurements for a given city. You may also use the advanced filters to narrow down results.</p>
+
+<div class="d-flex justify-content-center">
+@if (_countries is not null)
 {
-    <p><em>Loading countries...</em></p>
+    <div class="col-md-2">
+        <select @onchange="DoSelectCountry">
+            <option value="_select">(Select a country...)</option>
+            @foreach (var country in _countries)
+            {
+                <option value=@country.Code>@($"{country.Name} ({country.Code})")</option>
+            }
+        </select>
+    </div>
 }
-else
-{
-    <select @onchange="DoSelectCountry">
-        @foreach (var country in _countries)
-        {
-            <option value=@country.Code>@($"{country.Name} ({country.Code})")</option>
-        }
-    </select>
-}
 
-@if (_selectedCountry is not null)
+@if (_selectedCountry is not null && _cities is not null)
 {
-    @if (_cities is null)
-    {
-        <p><em>Loading cities...</em></p>
-    }
-    else
-    {
+    <div class="col-md-2">
         <select @onchange="DoSelectCity">
+            <option value="_select">(Select a city...)</option>
             @foreach (var city in _cities)
             {
                 <option value=@city.Name>@city.Name</option>
             }
         </select>
-    }
+    </div>
 }
+</div>
 
 <br />
 <br />
@@ -62,12 +61,26 @@ else
     private async Task DoSelectCountry(ChangeEventArgs e)
     {
         _selectedCountry = e.Value?.ToString();
-        var response = await Http.GetFromJsonAsync<City[]>($"Home/Cities?countryCode={_selectedCountry}");
-        _cities = response?.ToArray();
+
+        if (_selectedCountry == "_select")
+        {
+            ClearCities();
+        }
+        else
+        {
+            var response = await Http.GetFromJsonAsync<City[]>($"Home/Cities?countryCode={_selectedCountry}");
+            _cities = response?.ToArray();  
+        }
     }
     
     private void DoSelectCity(ChangeEventArgs e)
     {
         _selectedCity = e.Value?.ToString();
+    }
+
+    private void ClearCities()
+    {
+        _selectedCity = null;
+        _cities = null;
     }
 }
